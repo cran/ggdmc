@@ -1,3 +1,18 @@
+0.1.3.8 Yi-Shin Lin <yishin.lin@utas.edu.au>
+
+	- Add init.c to register native routines.
+
+0.1.3.7 Yi-Shin Lin <yishin.lin@utas.edu.au>
+
+	- Update to Rcpp 0.12.10 and RcppArmadillo >= 0.7.700.0.0 to resolve
+	  'Rcpp::Nullable' problem.
+
+0.1.3.6 Yi-Shin Lin <yishin.lin@utas.edu.au>
+
+	- Correct 'overloading ambiguity" installation failures on Solaris
+	- Update the link in README.md to canonical url,
+	'https://CRAN.R-project.org/package=RcppArmadillo'
+
 0.1.3.5 Yi-Shin Lin <yishin.lin@utas.edu.au>
 
 	- First release to the public

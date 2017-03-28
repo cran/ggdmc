@@ -2,8 +2,9 @@
  * function in fast-dm 30.2 density.c - compute the densities g- and g+ of the
  * first exit time. Copyright (C) 2012  Andreas Voss, Jochen Voss. */
 #define _USE_MATH_DEFINES // For Windows users
-#include <cmath>
-#include <vector>
+#include <RcppArmadillo.h>
+// #include <cmath>
+// #include <vector>
 
 void set_precision (double p) ;
 

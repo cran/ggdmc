@@ -6,7 +6,7 @@ Voss, Rothermund, and Voss's (2004) fast-dm 30.2 density.c, the DDM in
 ggdmc implements the equations in their paper as C++ routines plus a new
 parallel integration function to handle high precision requirement. 
 
-ggdmc is derived from Andrew Heathcote's Dynamiuc Model of Choice (DMC), 
+ggdmc is derived from Andrew Heathcote's Dynamic Model of Choice (DMC), 
 which has also implemented other numerous EAMs.  Identical to DMC, ggdmc uses 
 differential evolution Markov Chain Monte Carlo sampler to search optimal 
 theta and phi that maximise posterior likelihood. 
@@ -43,7 +43,7 @@ p.vector <- c(a=1, v=1, z=.5, sz=.25, sv=0.2,t0=.15)
 ## One usually would like to fit his/her own empirical data.
 dat1 <- simulate(m1, nsim=1e2, p.vector=p.vector)
 
-## Set up a data model instace. This binds the empirical/simulated data with 
+## Set up a data model instance. This binds the empirical/simulated data with 
 ## the model set-up
 mdi1 <- data.model.dmc(dat1, m1)
 
@@ -86,32 +86,34 @@ plot(samples0)  ## Check traceplot to see if chains converged
 
 ```
 
-
-### Prerequisities
+### Prerequisites
  - R (>= 3.0.2)
- - Rcpp (>= 0.12.3), RcppArmadillo (>= 0.6.700.6.0), ggplot2 (>= 2.1.0),
+ - Rcpp (>= 0.12.10), RcppArmadillo (>= 0.7.700.0.0), ggplot2 (>= 2.1.0),
    rtdists (>= 0.6-6), gridExtra (>= 2.2-1), ggmcmc (>= 0.7.3), 
    ggthemes (>= 3.0.1), stats (>= 3.2.2), loo (>= 0.1.6), coda (>= 0.16-1)
  - Windows users need Rtools (>= 3.3.0.1959), and Microsoft Visual Studio 
-   Communit (>= 2015) (for Open MPI library and M_PI macro support)
+   Community (>= 2015) (for Open MPI library and M_PI macro support)
  - OS X users need to install Open MPI library
  - Linux/Unix users may need to install Open MPI library, if it has not 
    been installed. 
+ - [Armadillo](https://CRAN.R-project.org/package=RcppArmadillo)
+   requires a recent compiler; for the g++ family at least version 4.6.*
+   is required. 
 
-Successful cases for Windows environment:
+Successful cases for Windows OS:
   - Microsoft Visual Studio Community 2015 (Version 14.0.25421.03 Update 3) on  
     Windows 10 64 bits.
   - Microsoft Visual Studio Community 2015 (Version 14.0.24720.1 Update 1), 
     with Rtools 3.4 on Windows 10 64 bits.
   
-Unsuccseeful cases for Windows environments:
+Unsuccseeful cases for Windows OS:
   - Microsoft Blend for Visual Studio Express 2015   
 
 ### Installing
 
 ```
 From CRAN: install.packages("ggdmc")
-From source: install.packages("ggdmc_0.1.3.5.tar.gz", repos = NULL, type="source")
+From source: install.packages("ggdmc_0.1.3.8.tar.gz", repos = NULL, type="source")
 
 ### Other supporting packages for DMC (not necessary for ggdmc)
 install.packages("coda_0.18-1.3.tar.gz", repos = NULL, type="source")
@@ -119,12 +121,20 @@ install.packages("tnorm_0.1.0.0.tar.gz", repos = NULL, type="source")
 
 ```
 
+## Citation
+
+If you use this package, please cite the software, for example:
+
+Lin, Y.-S., & Heathcote, A (in preparation). ggdmc: An R package for 
+hierarchical Bayesian evidence accumulation models, using differential
+evolution Markov Chain Monte Carlo Sampler. Retrieved from
+https://github.com/TasCL/ggdmc
 
 ## Contributors
 
-The ggdmc C++ codes are developed by [Yi-Shin Lin](http://www.tascl.org/yi-shin-lin.html). 
+The ggdmc C++ codes are developed by Yi-Shin Lin. 
 
-The R codes mainly are incorporated from DMC developed by [Andrew Heathcote](http://www.tascl.org/andrew-heathcote.html). 
+The R codes mainly are incorporated from DMC developed by Andrew Heathcote]. 
 
 If there is any bug been introduced inadvertently into DMC R codes, they are 
 probably errors brought in by the first author. Please report any bugs you may 
@@ -146,6 +156,6 @@ Any identical parts in tnorm_wrapper.cpp and tnrom.R belong to their copyright.
 Francois and Doug Bates's Rcpp, and RcppArmadillo.  
 * Armadillo is a collection of C++ library for performing linear
 algebra <http://arma.sourceforge.net/>, authored by Conrad Sanderson. 
-* DEMCMC sampler is based on the following papers, Turner & Sederberg (2012),
-Turner et al (2013) and Ter Braak (2006).
+* Crossover (DEMCMC) sampler is based on the following papers, 
+Turner & Sederberg (2012), Turner et al (2013) and Ter Braak (2006).
 * Thanks to Matthew Gretton's consulation about rtdists's internal. 

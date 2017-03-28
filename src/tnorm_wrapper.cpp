@@ -126,7 +126,6 @@ inline double alg4(const double lower, const double upper)
   return z ;
 }
 
-//' @export
 double rtn_scalar(const double mean,  const double sd, const double lower,
   const double upper)
 {
@@ -191,7 +190,6 @@ double rtn_scalar(const double mean,  const double sd, const double lower,
     return out ;
 }
 
-//' @export
 double dtn_scalar(const double x, const double mean, const double sd,
   const double lower, const double upper, int islog)
 {
@@ -216,7 +214,6 @@ double dtn_scalar(const double x, const double mean, const double sd,
   return(dens) ;
 }
 
-//' @export
 void rtn(Rcpp::NumericVector &mean, Rcpp::NumericVector &sd,
   Rcpp::NumericVector &lower, Rcpp::NumericVector &upper,
   Rcpp::NumericVector &draws) {
@@ -242,7 +239,6 @@ void rtn(Rcpp::NumericVector &mean, Rcpp::NumericVector &sd,
   }
 }
 
-//' @export
 void dtn(Rcpp::NumericVector &x,
   Rcpp::NumericVector &mean,  Rcpp::NumericVector &sd,
   Rcpp::NumericVector &lower, Rcpp::NumericVector &upper,
