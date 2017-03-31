@@ -1,4 +1,4 @@
-//   Copyright (C) <2016>  <Yi-Shin Lin>
+//   Copyright (C) <2017>  <Yi-Shin Lin>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -45,15 +45,15 @@ int  precision_set = 0;
 void set_precision (double p)
 {
   /* Try to achieve an accuracy of approximately 10^{-p} for the CDF.  */
-  TUNE_PDE_DT_MIN = pow(10, -0.400825*p-1.422813);
-  TUNE_PDE_DT_MAX = pow(10, -0.627224*p+0.492689);
-  TUNE_PDE_DT_SCALE = pow(10, -1.012677*p+2.261668);
-  TUNE_DZ = pow(10, -0.5*p-0.033403);
-  TUNE_DV = pow(10, -1.0*p+1.4);
-  TUNE_DT0 = pow(10, -0.5*p-0.323859);
+  TUNE_PDE_DT_MIN = std::pow(10.0, -0.400825*p-1.422813);
+  TUNE_PDE_DT_MAX = std::pow(10.0, -0.627224*p+0.492689);
+  TUNE_PDE_DT_SCALE = std::pow(10.0, -1.012677*p+2.261668);
+  TUNE_DZ = std::pow(10.0, -0.5*p-0.033403);
+  TUNE_DV = std::pow(10.0, -1.0*p+1.4);
+  TUNE_DT0 = std::pow(10.0, -0.5*p-0.323859);
 
-  TUNE_INT_T0 = 0.089045 * exp(-1.037580*p);
-  TUNE_INT_Z = 0.508061 * exp(-1.022373*p);
+  TUNE_INT_T0 = 0.089045 * std::exp(-1.037580*p);
+  TUNE_INT_Z = 0.508061 * std::exp(-1.022373*p);
 
   precision_set = 1;
 }
@@ -82,7 +82,7 @@ double integrate_parallel(double (*F)(double, std::vector<double>&),
 #endif
   for(int i=0; i<N; i++)
   {
-    x = a + (i+0.5)*step ;
+    x = a + (i + 0.5)*step ;
     out = out + F(x, pVec);
   }
   return out ;
@@ -107,7 +107,7 @@ double g_minus_large_time(double DT, double zr, int N)
   for(i = 1; i <= N; i++)
   {
     double d = i * M_PI ;
-    sum += exp(-0.5 * d*d * DT) * sin(d*zr) * i ;
+    sum += std::exp(-0.5 * d*d * DT) * sin(d*zr) * i ;
   }
   return sum * M_PI ;
 }
@@ -118,20 +118,20 @@ double g_minus_no_var(double DT, double a, double zr, double v)
     double simple, factor, eps, out;
     double ta = DT/(a*a);
 
-    factor = exp(-a*zr*v - 0.5*v*v*DT) / (a*a); // Front term in A3
+    factor = std::exp(-a*zr*v - 0.5*v*v*DT) / (a*a); // Front term in A3
     eps = EPSILON / factor;
 
     N_large = (int)ceil(1/(M_PI*sqrt(DT)));
     if (M_PI*ta*eps < 1)
     {
       N_large = std::max(N_large,
-        (int)ceil(sqrt(-2*log(M_PI*ta*eps) / (M_PI*M_PI*ta))));
+        (int)ceil(std::sqrt(-2.0*log(M_PI*ta*eps) / (M_PI*M_PI*ta))));
     }
 
     if (2*sqrt(2*M_PI*ta)*eps < 1)
     {
       N_small = (int)ceil(std::max(sqrt(ta) + 1,
-        2 + sqrt(-2*ta*log(2*eps*sqrt(2*M_PI*ta)))));
+        2 + std::sqrt(-2.0*ta*log(2.0*eps*std::sqrt(2.0*M_PI*ta)))));
     } else
     {
       N_small = 2;
@@ -164,21 +164,21 @@ double integral_v_g_minus(double zr, std::vector<double>& pVec)
   double simple, factor, eps, out ;
   double ta = DT/(a*a) ;
 
-  factor = 1 / (a*a * sqrt(DT * sv*sv + 1)) *
-    exp(-0.5 * (v*v*DT + 2*v*a*zr - a*zr*a*zr*sv*sv) / (DT*sv*sv+1)) ;
+  factor = 1 / (a*a * std::sqrt(DT * sv*sv + 1)) *
+    std::exp(-0.5 * (v*v*DT + 2.0*v*a*zr - a*zr*a*zr*sv*sv) / (DT*sv*sv + 1.0)) ;
   eps = EPSILON / factor ;
 
-  N_large = (int)ceil(1 / (M_PI*sqrt(DT))) ;
+  N_large = (int)ceil(1.0 / (M_PI*std::sqrt(DT))) ;
   if (M_PI*ta*eps < 1)
   {
     N_large = std::max(N_large,
-      (int)ceil(sqrt(-2*log(M_PI*ta*eps) / (M_PI*M_PI*ta)))) ;
+      (int)ceil(std::sqrt(-2.0*log(M_PI*ta*eps) / (M_PI*M_PI*ta)))) ;
   }
 
-  if (2*sqrt(2*M_PI*ta)*eps < 1)
+  if (2*std::sqrt(2.0*M_PI*ta)*eps < 1)
   {
     N_small = (int)ceil(std::max(sqrt(ta)+1,
-      2+sqrt(-2*ta*log(2*eps*sqrt(2*M_PI*ta))))) ;
+      2+std::sqrt(-2.0*ta*log(2.0*eps*sqrt(2.0*M_PI*ta))))) ;
   } else
   {
     N_small = 2 ;

@@ -87,7 +87,7 @@ plot(samples0)  ## Check traceplot to see if chains converged
 ```
 
 ### Prerequisites
- - R (>= 3.0.2)
+ - R (>= 3.0.0)
  - Rcpp (>= 0.12.10), RcppArmadillo (>= 0.7.700.0.0), ggplot2 (>= 2.1.0),
    rtdists (>= 0.6-6), gridExtra (>= 2.2-1), ggmcmc (>= 0.7.3), 
    ggthemes (>= 3.0.1), stats (>= 3.2.2), loo (>= 0.1.6), coda (>= 0.16-1)
@@ -113,7 +113,7 @@ Unsuccseeful cases for Windows OS:
 
 ```
 From CRAN: install.packages("ggdmc")
-From source: install.packages("ggdmc_0.1.3.8.tar.gz", repos = NULL, type="source")
+From source: install.packages("ggdmc_0.1.3.9.tar.gz", repos = NULL, type="source")
 
 ### Other supporting packages for DMC (not necessary for ggdmc)
 install.packages("coda_0.18-1.3.tar.gz", repos = NULL, type="source")

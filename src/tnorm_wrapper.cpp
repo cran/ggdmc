@@ -5,13 +5,12 @@
 
 #include <RcppArmadillo.h>
 
- inline bool CheckSimple(const double lower,  const double upper)
+inline bool CheckSimple(const double lower,  const double upper)
 {
   // Check if simpler subalgorithm is appropriate.
   // Init Values Used in Inequality of Interest
-  double val1 = (2 * sqrt(exp(1))) / (lower + sqrt(pow(lower, 2) + 4));
-  double val2 = exp((pow(lower, 2) - lower * sqrt(pow(lower, 2) + 4)) / (4)) ;
-  //
+  double val1 = (2.0 * std::sqrt(M_E)) / (lower + std::sqrt(lower*lower + 4.0));
+  double val2 = exp(lower*lower - lower * std::sqrt(lower*lower + 4.0) / 4.0) ;
 
   // Test if Simple is Preferred
   if (upper > lower + val1 * val2) {
@@ -22,35 +21,27 @@
 }
 
 // tn_check and rtn_check are the same
-bool tn_check(const double mean, const double sd,
-  const double lower, const double upper)
+bool tn_check(const double mean, const double sd, const double lower,
+  const double upper)
 {
   bool flag = true ;
-  if (sd <= 0) {
-    flag = false ;
-  }
-  if ((sd == R_NegInf) | (sd == R_PosInf)) {
-    flag = false ;
-  }
-  if ((mean == R_NegInf) | (mean == R_PosInf)) {
-    flag = false ;
-  }
-  if (lower >= upper) {
-    flag = false ;
-  }
+  if (sd <= 0) { flag = false ; }
+  if ((sd == R_NegInf) | (sd == R_PosInf)) { flag = false ; }
+  if ((mean == R_NegInf) | (mean == R_PosInf)) { flag = false ; }
+  if (lower >= upper) { flag = false ; }
   return(flag) ;
 }
 
 // Naive Accept-Reject algorithm; CJ's standard method (0)
 inline double alg1(const double lower, const double upper)
 {
-  int valid = 0 ;   // Init Valid Flag
-  double z = 0.0 ;  // Init Draw Storage
+  int valid = 0 ;    // Init Valid Flag
+  double z  = 0.0 ;  // Init Draw Storage
 
   // Loop Until Valid Draw
   while (valid == 0)
   {
-    z = Rf_rnorm(0.0, 1.0) ;
+    z = R::rnorm(0.0, 1.0) ;
     if (z <= upper && z >= lower) { valid = 1 ; }
   }
   return z ;
@@ -61,7 +52,7 @@ inline double alg2(const double lower, const double upper)
 {
   // Init flag and values
   int valid  = 0 ;  // p 122, right column
-  const double alphaStar = (lower + sqrt(pow(lower, 2.0) + 4.0)) / 2.0 ;
+  const double alphaStar = (lower + std::sqrt(lower*lower + 4.0)) / 2.0 ;
   double z   = 0 ;
   double u   = 0 ;
   double rho = 0 ;
@@ -70,8 +61,9 @@ inline double alg2(const double lower, const double upper)
   while (valid == 0)
   {
     z = Rf_rexp(alphaStar) + lower; // control lower boundary
-    u = Rf_runif(0, 1) ;
-    rho = exp(-pow(z - alphaStar, 2) / 2) ;
+    u = Rf_runif(0.0, 1.0) ;
+    rho = std::exp( -(z - alphaStar) * (z - alphaStar) / 2.0) ;
+    // rho = std::exp(-pow(z - alphaStar, 2.0) / 2.0) ;
     if (u <= rho && z <= upper) { valid = 1 ; } // Keep Successes
   }
   return z ;
@@ -82,7 +74,7 @@ inline double alg3(const double lower, const double upper)
 {
   // Init flag and values
   int valid  = 0 ;  // p 122, right column
-  const double alphaStar = (-upper + sqrt(pow(upper, 2.0) + 4.0)) / 2.0 ;
+  const double alphaStar = (-upper + std::sqrt(upper * upper + 4.0)) / 2.0 ;
   double z   = 0 ;
   double u   = 0 ;
   double rho = 0 ;
@@ -91,8 +83,9 @@ inline double alg3(const double lower, const double upper)
   while (valid == 0)
   {
     z = Rf_rexp(alphaStar) - upper; // control upper boundary
-    u = Rf_runif(0, 1) ;
-    rho = exp(-pow(z - alphaStar, 2) / 2) ;
+    u = Rf_runif(0.0, 1.0) ;
+    rho = std::exp( -(z - alphaStar) * (z - alphaStar) / 2.0) ;
+    // rho = exp(-pow(z - alphaStar, 2) / 2) ;
     if (u <= rho && z <= -lower) { valid = 1 ; } // Keep Successes
   }
   return z ;
@@ -111,16 +104,16 @@ inline double alg4(const double lower, const double upper)
     z = Rf_runif(lower, upper) ;
     if (lower > 0)
     {
-      rho = exp( (pow(lower, 2) - pow(z, 2)) / 2 ) ;
+      rho = std::exp( (lower*lower - z*z) / 2.0 ) ;
     }
     else if (upper < 0)
     {
-      rho = exp( (pow(upper, 2) - pow(z, 2)) / 2 ) ;
+      rho = std::exp( (upper * upper - z * z) / 2.0 ) ;
     } else  // 0 belongs to [lower, upper]
     {
-      rho = exp( -pow(z, 2) / 2) ;
+      rho = std::exp( -z*z / 2.0) ;
     }
-    u = Rf_runif(0, 1) ;
+    u = Rf_runif(0.0, 1.0) ;
     if (u <= rho) { valid = 1 ; }
   }
   return z ;
@@ -150,22 +143,22 @@ double rtn_scalar(const double mean,  const double sd, const double lower,
     (stdLower == -INFINITY  && stdUpper > 0) ||
     (std::isfinite(stdLower) && std::isfinite(stdUpper) &&
     (stdLower < 0) && (stdUpper > 0) &&
-    (stdUpper - stdLower > sqrt(2*PI))) ;
+    (stdUpper - stdLower > std::sqrt(2.0*PI))) ;
 
   // CJ's 1
   double term1_a2 = stdLower ;
-  double term2_a2 = 2*sqrt(exp(1)) / (stdLower+sqrt(pow(stdLower, 2.0) + 4.0)) ;
-  double term3_a2 = exp( (stdLower*2 - stdLower*sqrt(pow(stdLower, 2.0) + 4.0)) / 4) ;
+  double term2_a2 = 2.0*std::sqrt(M_E) /
+    (stdLower+std::sqrt(stdLower * stdLower + 4.0)) ;
+  double term3_a2 = std::exp( (stdLower*2.0 - stdLower*std::sqrt(stdLower * stdLower + 4.0)) / 4.0) ;
   double eq_a2 = term1_a2 + term2_a2 * term3_a2;
   bool a2 = (stdLower >= 0) && (stdUpper > eq_a2 ) ;
 
   // CJ's 2
   double term1_a3 = -stdUpper ;
-  double term2_a3 = 2*sqrt(exp(1)) / (-stdUpper+sqrt(pow(stdUpper, 2.0) + 4.0)) ;
-  double term3_a3 = exp( (stdUpper*2 - stdUpper*sqrt(pow(stdUpper, 2.0) + 4.0)) / 4) ;
+  double term2_a3 = 2.0*std::sqrt(M_E) / (-stdUpper+std::sqrt(stdUpper * stdUpper + 4.0)) ;
+  double term3_a3 = std::exp( (stdUpper*2.0 - stdUpper*std::sqrt(stdUpper * stdUpper + 4.0)) / 4.0) ;
   double eq_a3 = term1_a3 + term2_a3 * term3_a3;
   bool a3 = (stdUpper <= 0) && ( -stdLower > eq_a3) ;
-
 
   // CJ's 3 otherwise
     if (a0) { draw = NAN ;}  // nan
