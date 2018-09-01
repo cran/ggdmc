@@ -2,18 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{g_minus}
 \alias{g_minus}
-\alias{g_minus_parallel}
 \alias{g_plus}
-\alias{g_plus_parallel}
 \title{Calculate Drift-diffusion Probability Density}
 \usage{
 g_minus(pVec)
 
 g_plus(pVec)
-
-g_minus_parallel(pVec)
-
-g_plus_parallel(pVec)
 }
 \arguments{
 \item{pVec}{a 9-element parameter (double) vector. The user has to follow
@@ -31,20 +25,17 @@ using OpenMP libraries to do numerical integration. They resolve the
 problem when high precision (> 10) is required.
 }
 \examples{
-pVec1 <- c(a=2, v=2.5, zr=0.5, d=0, sz=0.3, sv=1, t0=0.3, st0=0,
+pvec1 <- c(a=2, v=2.5, zr=0.5, d=0, sz=0.3, sv=1, t0=0.3, st0=0,
            RT=.550, precision=2.5)
-g_minus(pVec1)
-## [1] 0.04965882
-g_plus(pVec1)
-## [1] 2.146265
-pVec2 <- c(a=2, v=2.5, zr=0.5, d=0, sz=0.3, sv=1, t0=0.3, st0=0,
-           RT=.550, precision=20)
-## system.time(d1 <- g_plus_parallel(pVec2))
-##     user  system elapsed
-##  135.708   0.000  12.022
-## system.time(d2 <- g_plus(pVec2))
-##    user  system elapsed
-## 104.516   0.000 104.490
+g_minus(pvec1) ## 0.04965882
+g_plus(pvec1) ## 2.146265
+
+pvec2 <- c(a=2, v=2.5, zr=0.5, d=.2, sz=0.3, sv=1, t0=0.3, st0=.1,
+           RT=.550, precision=2.5)
+
+g_minus(pvec2) ## 0.04194364
+g_plus(pvec2)  ## 1.94957
+
 }
 \references{
 Voss, A., Rothermund, K., & Voss, J. (2004). Interpreting the
@@ -53,4 +44,3 @@ parameters of the diffusion model: A empirical validation
 Ratcliff, R (1978). A theory of memory retrieval. \emph{Psychology Review},
 \bold{85(2)}, 59--108.
 }
-
