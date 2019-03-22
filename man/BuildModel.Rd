@@ -3,54 +3,50 @@
 \name{BuildModel}
 \alias{BuildModel}
 \alias{print.model}
+\alias{print.dmi}
 \title{Create a model object}
 \usage{
-BuildModel(p.map, responses, factors = list(dummy = "1"),
-  match.map = NULL, constants = numeric(0), type = "norm",
-  posdrift = TRUE, verbose = TRUE, cvs = NULL, responses2 = NULL,
-  constant_prior = NULL)
+BuildModel(p.map, responses, factors = list(A = "1"), match.map = NULL,
+  constants = numeric(0), type = "norm", posdrift = TRUE,
+  verbose = TRUE)
 
 \method{print}{model}(x, p.vector = NULL, ...)
+
+\method{print}{dmi}(x, ...)
 }
 \arguments{
-\item{p.map}{mapping factorial design to model parameters}
+\item{p.map}{parameter map. This option maps a particular factorial design
+to model parameters}
 
-\item{responses}{Response (accumulator) names}
+\item{responses}{specifying the response names and levels}
 
-\item{factors}{specifying factors and factor levels}
+\item{factors}{specifying a list of factors and their levels}
 
-\item{match.map}{matching stimuli and responses}
+\item{match.map}{match map. This option matches stimuli and responses}
 
-\item{constants}{setting parameters as constant value}
+\item{constants}{specifying the parameters with fixed values}
 
-\item{type}{using character string to specifying model type.}
+\item{type}{specifying model type, either "rd" or "norm".}
 
-\item{posdrift}{enforce postive drift rate, using truncated normal or
-just using normal distribution. This is used only by norm type (any
-LBA variants and extensions)}
+\item{posdrift}{a Boolean, switching between enforcing strict postive drift
+rates by using truncated normal distribution. This option is only useful in
+"norm" model type.}
 
-\item{verbose}{Print parameter vector, constants and model type}
-
-\item{cvs}{Names of trial covariates (in data). A redundant argument.}
-
-\item{responses2}{Second response name (multi-threshold models)}
-
-\item{constant_prior}{Parameter sampled from a fixed prior}
+\item{verbose}{Print p.vector, constants and model type}
 
 \item{x}{a model object}
 
-\item{p.vector}{parameter vector (for printing model)}
+\item{p.vector}{parameter vector}
 
 \item{...}{other arguments}
 }
 \description{
-Create a model array and attach many model attributes. These attributes
-specify a particular model and parameterisation.
+A model object consists of arraies with model attributes.
 }
 \examples{
 model <- BuildModel(
-        p.map     = list(a = "1", v = "1", z = "1", d = "1", t0 = "1", sv = "1",
-                         sz = "1", st0 = "1"),
+        p.map     = list(a = "1", v = "1", z = "1", d = "1", t0 = "1",
+                     sv = "1", sz = "1", st0 = "1"),
         constants = c(st0 = 0, d = 0, sz = 0, sv = 0),
         match.map = list(M = list(s1 = "r1", s2 = "r2")),
         factors   = list(S = c("s1", "s2")),

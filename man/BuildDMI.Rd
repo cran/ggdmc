@@ -4,25 +4,17 @@
 \alias{BuildDMI}
 \title{Bind data and models}
 \usage{
-BuildDMI(x, model, npda = 16384, bw = 0.01, gpuid = 0,
-  debug = FALSE)
+BuildDMI(x, model)
 }
 \arguments{
-\item{x}{data in a data frame format}
+\item{x}{data as in data frame}
 
 \item{model}{a model object}
-
-\item{npda}{number of model simulations}
-
-\item{bw}{kernel bandwidth}
-
-\item{gpuid}{GPU ID, indicating using which GPU cards on a machine with
-multieple GPUs.}
-
-\item{debug}{debugging switch}
+}
+\value{
+a data model instance
 }
 \description{
-Binding a data with a model object. This function also checks
-if they are compatible and adds a \code{cell.index} and many other
-attributes to the data frame.
+Binding a data set with a model object. The function also checks whether
+they are compatible and adds attributes on a data model instance.
 }

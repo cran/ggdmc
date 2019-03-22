@@ -4,13 +4,10 @@
 \name{ggdmc}
 \alias{ggdmc}
 \alias{ggdmc-package}
-\title{Bayeisan Computation for Cognitive Models}
+\title{Bayeisan computation of response time models}
 \description{
-\pkg{ggdmc} evolves from Dynamic Models of Choice (DMC), using graphic
-styles of ggplot2, highly efficient computations of Armadillo C++ and
-Rcpp and connecting GPU parallel computation to \pkg{ppda} to make fitting
-complex cognitive models feasible. \pkg{ggdmc} uses the sampling technique
-of population-based Monte Chain Monte Carlo.
+\pkg{ggdmc} uses the population-based Markov chain Monte Carlo to
+conduct Bayesian computation on cognitive models.
 }
 \references{
 Heathcote, A., Lin, Y.-S., Reynolds, A., Strickland, L., Gretton, M. &
@@ -18,16 +15,16 @@ Matzke, D., (2018). Dynamic model of choice.
 \emph{Behavior Research Methods}.
 https://doi.org/10.3758/s13428-018-1067-y. \cr
 
-Turner, B. M., & Sederberg P. B. (2012). Approximate
-Bayesian computation with differential evolution,
-\emph{Journal of Mathematical Psychology}, 56, 375--385. \cr
+Turner, B. M., & Sederberg P. B. (2012). Approximate Bayesian computation
+with differential evolution, \emph{Journal of Mathematical Psychology}, 56,
+375--385. \cr
 
 Ter Braak (2006). A Markov Chain Monte Carlo version of the genetic
 algorithm Differential Evolution: easy Bayesian computing for real
 parameter spaces. \emph{Statistics and Computing}, 16, 239-249.
 }
 \author{
-Yi-Shin Lin <yishin.lin@utas.edu.au> \cr
+Yi-Shin Lin <yishinlin001@gmail.com> \cr
 Andrew Heathcote <andrew.heathcote@utas.edu.au>
 }
 \keyword{package}

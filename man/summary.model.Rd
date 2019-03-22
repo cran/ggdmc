@@ -14,16 +14,16 @@
 
 \item{hyper}{whether to summarise hyper parameters}
 
-\item{start}{summarise from which iteration.}
+\item{start}{start from which iteration.}
 
-\item{end}{summarise to the end which iteration. For example, set
+\item{end}{end at which iteration. For example, set
 \code{start = 101} and \code{end = 1000}, instructs the function to
 calculate from 101 to 1000 iteration.}
 
 \item{hmeans}{a boolean switch indicating to calculate mean of hyper
 parameters}
 
-\item{hci}{boolean switch indicating to calculate credible intervals of
+\item{hci}{boolean switch; whether to calculate credible intervals of
 hyper parameters}
 
 \item{prob}{a numeric vector, indicating the quantiles to calculate}
@@ -42,25 +42,18 @@ study}
 \item{...}{other arguments}
 }
 \description{
-This calls severn different variants of summary function to summarise
+This calls seven different variants of summary function to summarise
 posterior samples
 }
 \examples{
 \dontrun{
 est1 <- summary(hsam[[1]], FALSE)
 est2 <- summary(hsam[[1]], FALSE, 1, 100)
-est3 <- summary_one(hsam[[1]], 1, 100, c(.025, .5, .975), verbose = TRUE)
-est4 <- summary_one(hsam[[1]], 1, 100, c(.025, .5, .975), verbose = F)
 
-est5 <- summary_many(hsam, 1, 100, c(.025, .5, .975), FALSE)
-est6 <- summary_many(hsam, 1, 100, c(.025, .5, .975), TRUE)
-est7 <- summary(hsam)
-est8 <- summary(hsam, verbose = TRUE)
-est9 <- summary(hsam, verbose = FALSE)
+est3 <- summary(hsam)
+est4 <- summary(hsam, verbose = TRUE)
+est5 <- summary(hsam, verbose = FALSE)
 
-
-hest1 <- summary_hyper(hsam, 1, 100, F, F, c(.025, .5, .975), 2, F)
-hest2 <- summary_hyper(hsam, 1, 100, F, F, c(.05, .5, .9), 2, F)
-hest3 <- summary(hsam, TRUE)
+hest1 <- summary(hsam, TRUE)
 }
 }

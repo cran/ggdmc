@@ -2,18 +2,30 @@
 % Please edit documentation in R/analysis.R
 \name{isstuck}
 \alias{isstuck}
-\title{Four pMCMC checking tools for automatic sampling}
+\alias{CheckConverged}
+\title{Model checking functions}
 \usage{
-isstuck(x, cut = 10, verbose = FALSE)
+isstuck(x, hyper = FALSE, cut = 10, start = 1, end = NA,
+  verbose = FALSE)
+
+CheckConverged(x)
 }
 \arguments{
 \item{x}{posterior samples}
 
+\item{hyper}{a Boolean switch, extracting hyper attribute.}
+
 \item{cut}{the criteria for suggesting abnormal chains found}
+
+\item{start}{start iteration}
+
+\item{end}{end iteration}
 
 \item{verbose}{print more information}
 }
 \description{
-The function tests whether MCMC chains encounter a parameter region
-difficult to search (ie get stuck):
+The function tests whether Markov chains encounter a parameter
+region that is difficult to search. \code{CheckConverged} is
+a wrapper function running the four checking functions,
+\code{isstuck}, \code{isflat}, \code{ismixed} and \code{iseffective}.
 }
