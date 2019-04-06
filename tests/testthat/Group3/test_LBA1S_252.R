@@ -1,7 +1,50 @@
 cat("\n-------------------- Testing LBA 1 Subject --------------------")
 
 rm(list = ls())
-model <- BuildModel(
+model0 <- ggdmc:::BuildModel(
+  p.map     = list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1",
+                   st0 = "1"),
+  match.map = list(M = list(s1 = 1, s2 = 2)),
+  factors   = list(S = c("s1", "s2")),
+  constants = c(st0 = 0, sd_v = 1),
+  responses = c("r1", "r2"),
+  type      = "norm")
+p.vector <- c(A = .75, B = 1.25, t0 = .15, mean_v.true = 2.5, mean_v.false = 1.5)
+ntrial <- 100
+dat0 <- ggdmc:::simulate.model(model0, nsim = ntrial, ps = p.vector)
+dmi0 <- ggdmc:::BuildDMI(dat0, model0)
+
+p.prior0 <- ggdmc:::BuildPrior(
+  dists = c("tnorm", "tnorm", "beta", "tnorm", "tnorm"),
+  p1    = c(A = 1, B = 1, t0 = 1, mean_v.true = 1, mean_v.false = 1),
+  p2    = c(1,  1,  1, 1, 1),
+  lower = c(rep(0, 3),  rep(NA, 2)),
+  upper = c(rep(NA, 2), 1, rep(NA, 2)))
+
+
+fit0 <- ggdmc:::StartNewsamples(dmi0, p.prior0, block=FALSE, pm0=0, pm1=0, nmc=2e2)
+fit <- ggdmc:::run(fit0, block=FALSE, thin = 1)
+
+fit <- ggdmc:::run(fit, block=FALSE, thin = 4)
+fit <- ggdmc:::run(fit, block=FALSE, thin = 16)
+
+fit1 <- ggdmc:::run(fit, block=FALSE, thin = 1, pm1=.05)
+fit2 <- ggdmc:::run(fit1, block=FALSE, thin = 1)
+hat <- ggdmc:::gelman(fit); hat
+hat <- ggdmc:::gelman(fit1); hat
+hat <- ggdmc:::gelman(fit2); hat
+
+est <- ggdmc:::summary.model(fit, recovery = TRUE, ps = p.vector, verbose = TRUE)
+est <- ggdmc:::summary.model(fit1, recovery = TRUE, ps = p.vector, verbose = TRUE)
+
+p0 <- ggdmc:::plot.model(fit0, start = 21)
+p1 <- ggdmc:::plot.model(fit)
+p2 <- ggdmc:::plot.model(fit, pll = F, den = T)
+
+
+
+
+model <- ggdmc252:::BuildModel(
     p.map     = list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1",
                      st0 = "1"),
     match.map = list(M = list(s1 = 1, s2 = 2)),
@@ -9,34 +52,54 @@ model <- BuildModel(
     constants = c(st0 = 0, sd_v = 1),
     responses = c("r1", "r2"),
     type      = "norm")
+dat <- ggdmc252:::simulate.model(model, nsim = ntrial, ps = p.vector)
 
-p.vector <- c(A = .75, B = 1.25, t0 = .15, mean_v.true = 2.5, mean_v.false = 1.5)
-ntrial <- 50
-dat <- simulate(model, nsim = ntrial, ps = p.vector)
-dmi <- BuildDMI(dat, model)
 
-p.prior <- BuildPrior(
+
+
+dmi <- ggdmc252:::BuildDMI(dat, model)
+class(dmi) <- c("dmi", "model", "data.frame")
+dmi1 <- ggdmc:::BuildDMI(dat, model1)
+
+attr(model, "is.r1")
+attr(model1, "is.r1")
+
+names(attributes(dmi))
+attr(dmi, "cell.empty")
+attr(dmi1, "cell.empty")
+dim(model)
+
+p.prior <- ggdmc252::BuildPrior(
     dists = c("tnorm", "tnorm", "beta", "tnorm", "tnorm"),
     p1    = c(A = 1, B = 1, t0 = 1, mean_v.true = 1, mean_v.false = 1),
     p2    = c(1,  1,  1, 1, 1),
     lower = c(rep(0, 3),  rep(NA, 2)),
     upper = c(rep(NA, 2), 1, rep(NA, 2)))
 
+
 ## Sampling ---------
-fit0 <- StartNewsamples(dmi, p.prior, pm0=0, pm1=0, block = FALSE)
-fit <- run(fit0, thin = 4, block = FALSE)
-hat <- gelman(fit);
+fit0 <- ggdmc252:::StartNewsamples(200, dmi, p.prior)
+fit  <- ggdmc252::run(fit0)
+fit  <- ggdmc252::run( ggdmc252::RestartSamples(500, fit, thin = 1) )
+hat  <- ggdmc252::gelman(fit); hat
+
+est  <- ggdmc252:::summary.model(fit, recovery = TRUE, ps = p.vector, verbose = TRUE)
+
+# p0 <- ggdmc252:::plot.model(fit)
+# p1 <- ggdmc252:::plot.model(fit, pll = F, den = T)
+npar <- length(ggdmc::GetPNames(model))
+
+
 
 pdf(file = "LBA1S.pdf")
-p0 <- ggdmc:::plot.model(fit)
-p1 <- ggdmc:::plot.model(fit0, start = 51)
 
+p2 <- ggdmc:::plot.model(fit0, start = 51)
 p2 <- ggdmc:::plot.model(fit)
 p2 <- ggdmc:::plot.model(fit, pll = F, den = T)
 dev.off()
 
 ## Analysis -----------
-est <- summary(fit, recovery = TRUE, ps = p.vector, verbose = TRUE)
+est <- ggdmc:::summary.model(fit, recovery = TRUE, ps = p.vector, verbose = TRUE)
 
   #                    A    B mean_v.false mean_v.true   t0
   # True            0.75 1.25         1.50        2.50 0.15

@@ -1,3 +1,35 @@
+/* - Rcpp::sampling and Rcpp::r_fastdm are adapted from src folder in
+ * rtdists 0.9-0 by Singmann, Brown, Gretton, Heathcote, Voss, Voss & Terry.
+ *
+ * - cdf.c - compute the CDF for the diffusion model (F* functions)
+ * - pde.c - numerically solve the Fokker-Planck equation (solve_tridiag,
+ * make_step & advance_to)
+ * - xmalloc.c - memory allocation with error checking (*xrealloc)
+ * - construct-samples.c - construct sample data for the article
+ * (compare_doubles, find_slot)
+ *
+ *
+ * ------------------------------------------------------------------------
+ * A verbatim copy of Jochen Voss & Andreas Voss's copyright declaration.
+ * ------------------------------------------------------------------------
+ * Copyright (C) 2006  Jochen Voss, Andreas Voss.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ */
+
 #include <ggdmc.hpp>
 
 /*---------------------------------------------------------------------------
@@ -27,17 +59,20 @@ static void solve_tridiag(int n, const double *rhs, double *res, double left,
  * 'right' on the superdiagonal.
  */
 {
-    // These two static fix identical memory locations for the variables,
-    // pointer-to-double *tmp and int tmp_len, when this function is
+    // These two statics fix identical memory locations for the variables,
+    // (1) pointer-to-double *tmp and (2) int tmp_len, when this function is
     // terminated and the program is still running. That is, when calculating
     // a CDF, the procedure of solving its PDE will be called several times.
-    static double *tmp = NULL;  // require n-1 double's, so fix the location of a
-    static int tmp_len = 0;     // pointer, instead of n-1 double.
+
+    // The function requests n-1 double's, so fix the location of a pointer,
+    // instead of n-1 double.
+    static double *tmp = NULL;
+    static int tmp_len = 0;
     double p, old_res, old_tmp;
     int  i;
 
-    // Show to yourself that they are indeed at the same locations while been
-    // called repeated.
+    // Show to yourself that they are indeed at the same location while been
+    // called repeatedly.
     // std::cout << tmp << " = &tmp, " << &tmp_len << " = &tmp_len\n";
 
     if (n-1 > tmp_len) {
@@ -45,9 +80,10 @@ static void solve_tridiag(int n, const double *rhs, double *res, double left,
       * 'solve_tridiag' caused about 10% of the total CPU load during
       * some fast-dm runs.  To avoid this problem, re-use the
       * same buffer between runs if possible. */
-      tmp = xrenew(double, tmp, n-1); // still we want to scratch the content of
-      tmp_len = n-1;                  // the two variables as explained by V&V's
-      // note above.
+      tmp = xrenew(double, tmp, n-1);
+      // still we want to scratch the content of
+      tmp_len = n-1;
+      // the two variables as explained by V&V's note above.
     }
 
     /* step 1: solving forward */
@@ -118,88 +154,6 @@ static void advance_to (int N, double *vector, double t0, double t1, double dz,
 }
 
 /*---------------------------------------------------------------------------
- Original found in phi.c
- ---------------------------------------------------------------------------*/
-/* erf.c - Gaussian error function
- *
- * by Thomas Meyer <tpmeyer@foxriver.com>, 2002
- *
- * A portable implementation of the Gaussian error function erf(),
- * using the Chebyshev algorithm.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * $Id: erf.c,v 1.3 2002/03/21 18:55:54 gtw Exp $
- */
-
-double erf (double x)
-{
-    double t, z, retval;
-
-    z = fabs( x );
-    t = 1.0 / ( 1.0 + 0.5 * z );
-
-
-    retval = t * exp( -z * z - 1.26551223 + t *
-      ( 1.00002368 + t *
-      ( 0.37409196 + t *
-      ( 0.09678418 + t *
-      ( -0.18628806 + t *
-      ( 0.27886807 + t *
-      ( -1.13520398 + t *
-      ( 1.48851587 + t *
-      ( -0.82215223 + t *
-      0.1708727 ) ) ) ) ) ) ) ) );
-    if( x < 0.0 )
-      return retval - 1.0;
-
-    return 1.0 - retval;
-}
-
-static double Phi (double x)
-/* The distribution function of the standard normal distribution.  */
-{
-    return  0.5*(1+erf (x/M_SQRT2));
-}
-
-static double Phi_inverse (double y)
-/* The inverse of Phi, calculated using the bisection method */
-{
-    double  l, r;
-
-    if (y<=0.5) {
-      l = -1;
-      while (Phi(l)>=y)  l -= 1;
-      r = l+1;
-    } else {
-      r = 0;
-      while (Phi(r)<y)  r += 1;
-      l = r-1;
-    }
-
-    do {
-      double m = 0.5*(l+r);
-      if (Phi(m) < y) {
-        l = m;
-      } else {
-        r = m;
-      }
-    } while (r-l > 1e-8);
-    return  0.5*(l+r);
-}
-
-/*---------------------------------------------------------------------------
  Original found in cdf.c
  ---------------------------------------------------------------------------*/
 // Four different destructors
@@ -227,8 +181,8 @@ static void F_st0_start  (F_calculator *fc, int plus);
 /*** plain: no variability **************************************************/
 double F_plain_data::F_limit(double z)
 {
-  if (fabs(v) < 1e-8) { return 1 - z/a; }
-  else { return ( exp(-2*v*z)-exp(-2*v*a) ) / (1-exp(-2*v*a) ); }
+  if (std::fabs(v) < 1e-8) { return 1 - z/a; }
+  else { return ( std::exp(-2*v*z)-std::exp(-2*v*a) ) / (1-std::exp(-2*v*a) ); }
 }
 
 static F_calculator *F_plain_new (Parameters * params)
@@ -236,8 +190,7 @@ static F_calculator *F_plain_new (Parameters * params)
   F_calculator * fc = new F_calculator;
   F_plain_data * data = new F_plain_data;
 
-
-  // V&V said "N must be even, otherwise the case szr == 1 fails"
+  // V&V's note "N must be even, otherwise the case szr == 1 fails"
   int N = 2*(int)(params->a*0.5/params->TUNE_DZ+0.5);
   if (N<4) N = 4;
 
@@ -269,17 +222,10 @@ static F_calculator *F_plain_new (Parameters * params)
 static const double *F_plain_get_F (F_calculator *fc, double t)
 {
   F_plain_data *data = (F_plain_data*)fc->data;
-  // double tmp_t = t;
-  // t = tmp_t - data->t_offset;
-  // if (tmp_t == data->t_offset) Rcpp::Rcout << "Equal\n";
   t -= data->t_offset;
 
   if (t > data->t)
   {
-
-    // Rcpp::Rcout <<"offset, t, and data->t " << data->t_offset << ", " <<
-    //   t << " " << data->t << std::endl;
-
     advance_to (fc->N, data->F, data->t, t, data->dz, data->v,
                 data->TUNE_PDE_DT_MIN, data->TUNE_PDE_DT_MAX,
                 data->TUNE_PDE_DT_SCALE);
@@ -342,7 +288,7 @@ static F_calculator *F_sz_new (Parameters *params)
   N = base_fc->N;
   dz = F_plain_get_z(base_fc, 1) - F_plain_get_z(base_fc, 0);
   tmp = sz/(2*dz);
-  k = (int)(ceil(tmp) + 0.5); // step in z space
+  k = (int)(std::ceil(tmp) + 0.5); // step in z space
   if (2*k > N) Rcpp::stop ("2*k > N"); // assert is slient in R
 
   fc->N = N-2*k;
@@ -380,12 +326,7 @@ static const double *F_sz_get_F (F_calculator *fc, double t)
   double  tmp, q, f;
   int  i, j, m;
 
-  // Rcpp::Rcout << "t in sz " << t << std::endl;
   F = F_get_F(data->base_fc, t);
-  // for(int l = 0; l<fc->N; l++) {
-  //   Rcpp::Rcout <<"in F_sz_get_F data->base_fc " << F[l] << std::endl;
-  // }
-
 
   m = 2*data->k;
   q = data->q;
@@ -452,7 +393,8 @@ static F_calculator * F_sv_new (Parameters *params)
   temp_params.sv = 0;   // Integrate across svs
 
   for (j=0; j<nv; ++j) {
-    x = Phi_inverse ((0.5+j)/nv);
+
+    x = R::qnorm ((0.5+j)/nv, 0., 1., 1, 0);
     temp_params.v = params->sv*x + params->v;
     base_fc[j] = F_sz_new(&temp_params);
   }
@@ -480,12 +422,8 @@ static const double * F_sv_get_F (F_calculator *fc, double t)
   double *avg = data->avg;
   int  i, j;
 
-  // Rcpp::Rcout << "t in sv get row " << t << std::endl;
   // Calculate avg in the F_sz_data
   F = F_get_F(data->base_fc[0], t);
-  // for(int l = 0; l<fc->N; l++) {
-  //   Rcpp::Rcout <<"in F_sv_get_F  data->base_fc[0]" << F[l] << std::endl;
-  // }
 
   // retrieve avg in the F_sz_data
   for (i=0; i<=fc->N; ++i) avg[i] = F[i];
@@ -522,7 +460,7 @@ static void F_sv_start (F_calculator *fc, int plus)
   F_sv_data *data = (F_sv_data *)fc->data;
   int  j;
   fc->plus = plus;
-  // Serve to set plus in each of the F_sz base_fc
+  // To set plus in each of the F_sz base_fc
   for (j=0; j<data->nv; ++j) F_start (data->base_fc[j], plus);
 }
 
@@ -545,12 +483,7 @@ static const double * F_st0_get_row(const F_calculator * fc, int j)
     double t;
     const double * F;
     t = data->start + j*data->dt;
-    // Rcpp::Rcout << "t in st0 get row " << t << std::endl;
-
     F = F_get_F(data->base_fc, t);
-    // for(int l = 0; l<N; l++) {
-    //   Rcpp::Rcout <<"in F_st0_get_row " << F[l] << std::endl;
-    // }
 
     memcpy(row, F, (N+1)*sizeof(double));
     data->valid[idx] = 1;
@@ -594,9 +527,6 @@ static F_calculator * F_st0_new (Parameters * params)
   data->base   = 0;
   data->values = new double[M*(N+1)];
   data->valid = new char[M];
-
-  // data->start   = -DBL_MAX;
-  // for (int j = 0; j < M; ++j) data->valid[j] = 0;
 
   data->avg = new double[N+1];
 
@@ -651,7 +581,7 @@ static const double * F_st0_get_F (F_calculator *fc, double t)
   // A independent block to confine scope
   { // tmp allocated and scope begins
     double tmp = (b - data->start)/data->dt;
-    m = (int)(ceil (tmp) + 0.5);      // V&V's note:
+    m = (int)(std::ceil(tmp) + 0.5);      // V&V's note:
     if (m >= data->M)  m = data->M-1; // "protect against rounding errors"
     q = (a - data->start)/data->dt;
     r = m - tmp;
@@ -828,6 +758,10 @@ static int find_slot(double target, const double *value, int l, int r)
   else    { return find_slot(target, value, m, r); }
 }
 
+/*---------------------------------------------------------------------------
+ Original found in rtdists 0.9-0
+ ---------------------------------------------------------------------------*/
+
 Rcpp::List sampling(int s_size, Parameters * params, bool random_flag)
 {
   double Fs_min=1, Fs_max=0, t_min=-.5, t_max=.5, dt, t;
@@ -893,7 +827,7 @@ Rcpp::List sampling(int s_size, Parameters * params, bool random_flag)
     if (F[i] > 1)	F[i] = 1;
   }
 
-  qsort(F, N+1, sizeof(double), compare_doubles); // use quick sort in cstdlib
+  std::qsort(F, N+1, sizeof(double), compare_doubles); // use quick sort in cstdlib
   if (F[0] > Fs_min)		F[0] = Fs_min;
   if (F[N] < Fs_max)		F[N] = Fs_max;
 
@@ -909,7 +843,7 @@ Rcpp::List sampling(int s_size, Parameters * params, bool random_flag)
     if (F[k] > y || y > F[k+1]) Rcpp::stop("y not in the range");
 
     out_bounds[i] = t >= 0;
-    out_RTs[i] = fabs(t);
+    out_RTs[i] = std::fabs(t);
   }
 
   delete [] F;
