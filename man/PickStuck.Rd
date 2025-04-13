@@ -4,8 +4,15 @@
 \alias{PickStuck}
 \title{Which chains get stuck}
 \usage{
-PickStuck(x, hyper = FALSE, cut = 10, start = 1, end = NA,
-  verbose = FALSE, digits = 2)
+PickStuck(
+  x,
+  hyper = FALSE,
+  cut = 10,
+  start = 1,
+  end = NA,
+  verbose = FALSE,
+  digits = 2
+)
 }
 \arguments{
 \item{x}{posterior samples}

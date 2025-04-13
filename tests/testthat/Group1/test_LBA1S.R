@@ -23,7 +23,7 @@ p.prior <- BuildPrior(
     upper = c(rep(NA, 2), 1, rep(NA, 2)))
 
 ## Sampling ---------
-fit0 <- StartNewsamples(dmi, p.prior, pm0=0, pm1=0, block = FALSE)
+fit0 <- StartNewsamples(dmi, p.prior, pm_Hu = 0, pm_BT = 0, block = FALSE)
 fit <- run(fit0, thin = 4, block = FALSE)
 hat <- gelman(fit);
 

@@ -6,9 +6,16 @@
 \alias{print.dmi}
 \title{Create a model object}
 \usage{
-BuildModel(p.map, responses, factors = list(A = "1"), match.map = NULL,
-  constants = numeric(0), type = "norm", posdrift = TRUE,
-  verbose = TRUE)
+BuildModel(
+  p.map,
+  responses,
+  factors = list(A = "1"),
+  match.map = NULL,
+  constants = numeric(0),
+  type = "norm",
+  posdrift = TRUE,
+  verbose = TRUE
+)
 
 \method{print}{model}(x, p.vector = NULL, ...)
 

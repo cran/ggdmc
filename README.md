@@ -178,18 +178,13 @@ more examples.
 
 ## Prerequisites
  - R (>= 3.3.0)
- - R packages: Rcpp (>= 0.12.10), RcppArmadillo (>= 0.7.700.3.0), 
+ - R packages: Rcpp (>= 1.0.7), RcppArmadillo (>= 0.7.700.3.0), 
    ggplot2 (>= 2.1.0), coda (>= 0.16-1), matrixStats, data.table
- - Windows users need Rtools (>= 3.3.0.1959) 
- - ~~Mac OS users need to make clang understand OpenMP flag.~~
- - ~~Linux/Unix users may need to install Open MPI library, if it has not 
-   been installed.~~ 
- - ~~[Armadillo](https://CRAN.R-project.org/package=RcppArmadillo)
-   may need a recent g++ compiler > 4.6~~
-
+ - Windows users need latest Rtools (>= 4.5) 
+ 
 ## Installation
 
-From CRAN (0.2.6.0): 
+From CRAN (0.2.6.1): 
 > install.packages("ggdmc")
 
 From source: 
@@ -199,26 +194,6 @@ From source:
 From GitHub (you need _devtools_) (0.2.6.0):
 
 > devtools::install_github(“yxlin/ggdmc”)
-
-
-For Mac Users:
-
-~~1. Install [gfortran](https://gcc.gnu.org/wiki/GFortranBinaries#MacOS).
-As to 27, Aug, 2018, the gfortran version has to be 6.1, even you are using a 
-macOS High Sierra Version 10.13.4. gfortran 6.3 may not work.~~
-
-~~2. Install clang4-r. 
-[James Balamuta](https://thecoatlessprofessor.com/programming/openmp-in-r-on-os-x/)
-has created a convenient tool, [clang4-r](https://uofi.app.box.com/v/r-macos-clang-pkg).
-Once you install clang4-r, your clang will then understand the OpenMP flag
-in _ggdmc_. The aim is to allow macOS to understand OpenMP flag, so you may use 
-other methods for that purpose, if you do not want to install clang4-r. The
-clang4-r is the most straightforward we found so far. 
-However we have not looked into the source code of clang4-r. Use it at your
-own risk.~~
-
-A configure script now disables OpenMP, so macOS users can install without
-encountering the OpenMP problem. 
 
 
 ## Citation
@@ -246,9 +221,9 @@ GPL-2
 * The PDF, CDF and random number generation of DDM are derived from 
 Voss & Voss's fast-dm 30.2 and rtdists 0.9-0. 
 * Truncated normal functions are originally based on 
-[Jonathan Olmsted's](mailto:jpolmsted@gmail.com) RcppTN 0.1-8 at
+Jonathan Olmsted's RcppTN 0.1-8 at
 https://github.com/olmjo/RcppTN,
-[Christopher Jackson's](chris.jackson@mrc-bsu.cam.ac.uk) R codes in msm package,
+Christopher Jackson's R codes in msm package,
 and Robert (1995, Statistics & Computing). 
 * Thanks to Matthew Gretton's consultation regarding the rtdists. 
 * Thanks to Andrew Heathcote for lending me his MacBook Air. 

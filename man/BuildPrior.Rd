@@ -4,10 +4,15 @@
 \alias{BuildPrior}
 \title{Specifying Parameter Prior Distributions}
 \usage{
-BuildPrior(p1, p2, lower = rep(NA, length(p1)), upper = rep(NA,
-  length(p1)), dists = rep("tnorm", length(p1)),
-  untrans = rep("identity", length(p1)), types = c("tnorm", "beta",
-  "gamma", "lnorm", "unif", "constant", "tnorm2", NA))
+BuildPrior(
+  p1,
+  p2,
+  lower = rep(NA, length(p1)),
+  upper = rep(NA, length(p1)),
+  dists = rep("tnorm", length(p1)),
+  untrans = rep("identity", length(p1)),
+  types = c("tnorm", "beta", "gamma", "lnorm", "unif", "constant", "tnorm2", NA)
+)
 }
 \arguments{
 \item{p1}{the first parameter of a distribution}

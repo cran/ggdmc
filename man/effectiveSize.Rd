@@ -13,8 +13,14 @@ effectiveSize_many(x, start, end, verbose)
 
 effectiveSize_one(x, start, end, digits, verbose)
 
-effectiveSize(x, hyper = FALSE, start = 1, end = NA, digits = 0,
-  verbose = FALSE)
+effectiveSize(
+  x,
+  hyper = FALSE,
+  start = 1,
+  end = NA,
+  digits = 0,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{posterior samples}

@@ -620,8 +620,8 @@ effectiveSize <- function(x, hyper = FALSE, start = 1, end = NA,
 ##' @importFrom coda spectrum0.ar
 safespec0 <- function(x) {
   result <- try(coda::spectrum0.ar(x)$spec)
-  if (class(result) == "try-error") result <- NA
-  if (class(result) == "try") result <- NA
+  if (inherits(result, "try-error")) result <- NA  # Recommended
+  if (inherits(result, "try")) result <- NA  # Recommended
   result
 }
 

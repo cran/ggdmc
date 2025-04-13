@@ -6,54 +6,11 @@
 
 using namespace Rcpp;
 
-// likelihood
-std::vector<double> likelihood(arma::vec pvector, List data, double min_lik);
-RcppExport SEXP _ggdmc_likelihood(SEXP pvectorSEXP, SEXP dataSEXP, SEXP min_likSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type pvector(pvectorSEXP);
-    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< double >::type min_lik(min_likSEXP);
-    rcpp_result_gen = Rcpp::wrap(likelihood(pvector, data, min_lik));
-    return rcpp_result_gen;
-END_RCPP
-}
-// p_df
-arma::mat p_df(arma::vec pvector, std::string cell, std::string mtype, std::vector<std::string> pnames, std::vector<std::string> parnames, std::vector<std::string> dim0, std::vector<std::string> dim1, std::vector<std::string> dim2, std::vector<double> allpar, arma::ucube model, arma::uvec isr1, arma::umat n1idx, bool n1order);
-RcppExport SEXP _ggdmc_p_df(SEXP pvectorSEXP, SEXP cellSEXP, SEXP mtypeSEXP, SEXP pnamesSEXP, SEXP parnamesSEXP, SEXP dim0SEXP, SEXP dim1SEXP, SEXP dim2SEXP, SEXP allparSEXP, SEXP modelSEXP, SEXP isr1SEXP, SEXP n1idxSEXP, SEXP n1orderSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type pvector(pvectorSEXP);
-    Rcpp::traits::input_parameter< std::string >::type cell(cellSEXP);
-    Rcpp::traits::input_parameter< std::string >::type mtype(mtypeSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type pnames(pnamesSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type parnames(parnamesSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim0(dim0SEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim1(dim1SEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim2(dim2SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type allpar(allparSEXP);
-    Rcpp::traits::input_parameter< arma::ucube >::type model(modelSEXP);
-    Rcpp::traits::input_parameter< arma::uvec >::type isr1(isr1SEXP);
-    Rcpp::traits::input_parameter< arma::umat >::type n1idx(n1idxSEXP);
-    Rcpp::traits::input_parameter< bool >::type n1order(n1orderSEXP);
-    rcpp_result_gen = Rcpp::wrap(p_df(pvector, cell, mtype, pnames, parnames, dim0, dim1, dim2, allpar, model, isr1, n1idx, n1order));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ac_
-arma::vec ac_(arma::vec x, unsigned int nlag);
-RcppExport SEXP _ggdmc_ac_(SEXP xSEXP, SEXP nlagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nlag(nlagSEXP);
-    rcpp_result_gen = Rcpp::wrap(ac_(x, nlag));
-    return rcpp_result_gen;
-END_RCPP
-}
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // r_fastdm
 Rcpp::List r_fastdm(unsigned int num_values, std::vector<double> params, double precision, bool stop_on_error);
 RcppExport SEXP _ggdmc_r_fastdm(SEXP num_valuesSEXP, SEXP paramsSEXP, SEXP precisionSEXP, SEXP stop_on_errorSEXP) {
@@ -68,103 +25,55 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// init_new
-List init_new(List data, List prior, unsigned int nchain, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm, double pm_old, bool block);
-RcppExport SEXP _ggdmc_init_new(SEXP dataSEXP, SEXP priorSEXP, SEXP nchainSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pmSEXP, SEXP pm_oldSEXP, SEXP blockSEXP) {
+// likelihood
+Rcpp::NumericVector likelihood(Rcpp::NumericVector p_vector_r, List data, double min_lik);
+RcppExport SEXP _ggdmc_likelihood(SEXP p_vector_rSEXP, SEXP dataSEXP, SEXP min_likSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type p_vector_r(p_vector_rSEXP);
     Rcpp::traits::input_parameter< List >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< List >::type prior(priorSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nchain(nchainSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
-    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
-    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
-    Rcpp::traits::input_parameter< double >::type pm(pmSEXP);
-    Rcpp::traits::input_parameter< double >::type pm_old(pm_oldSEXP);
-    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
-    rcpp_result_gen = Rcpp::wrap(init_new(data, prior, nchain, nmc, thin, report, rp, gammamult, pm, pm_old, block));
+    Rcpp::traits::input_parameter< double >::type min_lik(min_likSEXP);
+    rcpp_result_gen = Rcpp::wrap(likelihood(p_vector_r, data, min_lik));
     return rcpp_result_gen;
 END_RCPP
 }
-// init_old
-List init_old(List samples, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm, double pm_old, bool block, bool add);
-RcppExport SEXP _ggdmc_init_old(SEXP samplesSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pmSEXP, SEXP pm_oldSEXP, SEXP blockSEXP, SEXP addSEXP) {
+// p_df
+Rcpp::NumericMatrix p_df(Rcpp::NumericVector p_vector_r, std::string cell, std::string mtype, std::vector<std::string> pnames, std::vector<std::string> parnames, std::vector<std::string> dim0, std::vector<std::string> dim1, std::vector<std::string> dim2, std::vector<double> allpar, Rcpp::NumericVector model, Rcpp::NumericVector isr1, Rcpp::NumericMatrix n1idx, bool n1order);
+RcppExport SEXP _ggdmc_p_df(SEXP p_vector_rSEXP, SEXP cellSEXP, SEXP mtypeSEXP, SEXP pnamesSEXP, SEXP parnamesSEXP, SEXP dim0SEXP, SEXP dim1SEXP, SEXP dim2SEXP, SEXP allparSEXP, SEXP modelSEXP, SEXP isr1SEXP, SEXP n1idxSEXP, SEXP n1orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type samples(samplesSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
-    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
-    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
-    Rcpp::traits::input_parameter< double >::type pm(pmSEXP);
-    Rcpp::traits::input_parameter< double >::type pm_old(pm_oldSEXP);
-    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
-    Rcpp::traits::input_parameter< bool >::type add(addSEXP);
-    rcpp_result_gen = Rcpp::wrap(init_old(samples, nmc, thin, report, rp, gammamult, pm, pm_old, block, add));
-    return rcpp_result_gen;
-END_RCPP
-}
-// init_newhier
-List init_newhier(List prior, List lprior, List sprior, List data, unsigned int nchain, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm, double pm_old, bool block);
-RcppExport SEXP _ggdmc_init_newhier(SEXP priorSEXP, SEXP lpriorSEXP, SEXP spriorSEXP, SEXP dataSEXP, SEXP nchainSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pmSEXP, SEXP pm_oldSEXP, SEXP blockSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type prior(priorSEXP);
-    Rcpp::traits::input_parameter< List >::type lprior(lpriorSEXP);
-    Rcpp::traits::input_parameter< List >::type sprior(spriorSEXP);
-    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nchain(nchainSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
-    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
-    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
-    Rcpp::traits::input_parameter< double >::type pm(pmSEXP);
-    Rcpp::traits::input_parameter< double >::type pm_old(pm_oldSEXP);
-    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
-    rcpp_result_gen = Rcpp::wrap(init_newhier(prior, lprior, sprior, data, nchain, nmc, thin, report, rp, gammamult, pm, pm_old, block));
-    return rcpp_result_gen;
-END_RCPP
-}
-// init_oldhier
-List init_oldhier(List samples, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm, double pm_old, bool block, bool add);
-RcppExport SEXP _ggdmc_init_oldhier(SEXP samplesSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pmSEXP, SEXP pm_oldSEXP, SEXP blockSEXP, SEXP addSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type samples(samplesSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
-    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
-    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
-    Rcpp::traits::input_parameter< double >::type pm(pmSEXP);
-    Rcpp::traits::input_parameter< double >::type pm_old(pm_oldSEXP);
-    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
-    Rcpp::traits::input_parameter< bool >::type add(addSEXP);
-    rcpp_result_gen = Rcpp::wrap(init_oldhier(samples, nmc, thin, report, rp, gammamult, pm, pm_old, block, add));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type p_vector_r(p_vector_rSEXP);
+    Rcpp::traits::input_parameter< std::string >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< std::string >::type mtype(mtypeSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type pnames(pnamesSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type parnames(parnamesSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim0(dim0SEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim1(dim1SEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type dim2(dim2SEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type allpar(allparSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type isr1(isr1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type n1idx(n1idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type n1order(n1orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(p_df(p_vector_r, cell, mtype, pnames, parnames, dim0, dim1, dim2, allpar, model, isr1, n1idx, n1order));
     return rcpp_result_gen;
 END_RCPP
 }
 // rlba_norm
-arma::mat rlba_norm(unsigned int n, arma::vec A, arma::vec b, arma::vec mean_v, arma::vec sd_v, arma::vec t0, arma::vec st0, bool posdrift);
+Rcpp::NumericMatrix rlba_norm(unsigned int n, const Rcpp::NumericVector A, const Rcpp::NumericVector b, const Rcpp::NumericVector mean_v, const Rcpp::NumericVector sd_v, const Rcpp::NumericVector t0, const Rcpp::NumericVector st0, bool posdrift);
 RcppExport SEXP _ggdmc_rlba_norm(SEXP nSEXP, SEXP ASEXP, SEXP bSEXP, SEXP mean_vSEXP, SEXP sd_vSEXP, SEXP t0SEXP, SEXP st0SEXP, SEXP posdriftSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< unsigned int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type A(ASEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type mean_v(mean_vSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type sd_v(sd_vSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type t0(t0SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type st0(st0SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type mean_v(mean_vSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type sd_v(sd_vSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type t0(t0SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type st0(st0SEXP);
     Rcpp::traits::input_parameter< bool >::type posdrift(posdriftSEXP);
     rcpp_result_gen = Rcpp::wrap(rlba_norm(n, A, b, mean_v, sd_v, t0, st0, posdrift));
     return rcpp_result_gen;
@@ -182,27 +91,51 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test_sumlogprior
-double test_sumlogprior(arma::vec pvec, List prior);
-RcppExport SEXP _ggdmc_test_sumlogprior(SEXP pvecSEXP, SEXP priorSEXP) {
+// init_mcmc
+List init_mcmc(List data_or_samples, List prior, unsigned int nchain, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm_Hu, double pm_BT, bool block, bool add, bool is_old);
+RcppExport SEXP _ggdmc_init_mcmc(SEXP data_or_samplesSEXP, SEXP priorSEXP, SEXP nchainSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pm_HuSEXP, SEXP pm_BTSEXP, SEXP blockSEXP, SEXP addSEXP, SEXP is_oldSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type pvec(pvecSEXP);
+    Rcpp::traits::input_parameter< List >::type data_or_samples(data_or_samplesSEXP);
     Rcpp::traits::input_parameter< List >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_sumlogprior(pvec, prior));
+    Rcpp::traits::input_parameter< unsigned int >::type nchain(nchainSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
+    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
+    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
+    Rcpp::traits::input_parameter< double >::type pm_Hu(pm_HuSEXP);
+    Rcpp::traits::input_parameter< double >::type pm_BT(pm_BTSEXP);
+    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
+    Rcpp::traits::input_parameter< bool >::type add(addSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_old(is_oldSEXP);
+    rcpp_result_gen = Rcpp::wrap(init_mcmc(data_or_samples, prior, nchain, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT, block, add, is_old));
     return rcpp_result_gen;
 END_RCPP
 }
-// test_dprior
-arma::vec test_dprior(arma::vec pvec, List prior);
-RcppExport SEXP _ggdmc_test_dprior(SEXP pvecSEXP, SEXP priorSEXP) {
+// init_hier
+List init_hier(List data_or_samples, List prior, List lprior, List sprior, unsigned int nchain, unsigned int nmc, unsigned int thin, unsigned int report, double rp, double gammamult, double pm_Hu, double pm_BT, bool block, bool add, bool is_old);
+RcppExport SEXP _ggdmc_init_hier(SEXP data_or_samplesSEXP, SEXP priorSEXP, SEXP lpriorSEXP, SEXP spriorSEXP, SEXP nchainSEXP, SEXP nmcSEXP, SEXP thinSEXP, SEXP reportSEXP, SEXP rpSEXP, SEXP gammamultSEXP, SEXP pm_HuSEXP, SEXP pm_BTSEXP, SEXP blockSEXP, SEXP addSEXP, SEXP is_oldSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type pvec(pvecSEXP);
+    Rcpp::traits::input_parameter< List >::type data_or_samples(data_or_samplesSEXP);
     Rcpp::traits::input_parameter< List >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_dprior(pvec, prior));
+    Rcpp::traits::input_parameter< List >::type lprior(lpriorSEXP);
+    Rcpp::traits::input_parameter< List >::type sprior(spriorSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type nchain(nchainSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type nmc(nmcSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type report(reportSEXP);
+    Rcpp::traits::input_parameter< double >::type rp(rpSEXP);
+    Rcpp::traits::input_parameter< double >::type gammamult(gammamultSEXP);
+    Rcpp::traits::input_parameter< double >::type pm_Hu(pm_HuSEXP);
+    Rcpp::traits::input_parameter< double >::type pm_BT(pm_BTSEXP);
+    Rcpp::traits::input_parameter< bool >::type block(blockSEXP);
+    Rcpp::traits::input_parameter< bool >::type add(addSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_old(is_oldSEXP);
+    rcpp_result_gen = Rcpp::wrap(init_hier(data_or_samples, prior, lprior, sprior, nchain, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT, block, add, is_old));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -256,18 +189,13 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_ggdmc_r_fastdm", (DL_FUNC) &_ggdmc_r_fastdm, 4},
     {"_ggdmc_likelihood", (DL_FUNC) &_ggdmc_likelihood, 3},
     {"_ggdmc_p_df", (DL_FUNC) &_ggdmc_p_df, 13},
-    {"_ggdmc_ac_", (DL_FUNC) &_ggdmc_ac_, 2},
-    {"_ggdmc_r_fastdm", (DL_FUNC) &_ggdmc_r_fastdm, 4},
-    {"_ggdmc_init_new", (DL_FUNC) &_ggdmc_init_new, 11},
-    {"_ggdmc_init_old", (DL_FUNC) &_ggdmc_init_old, 10},
-    {"_ggdmc_init_newhier", (DL_FUNC) &_ggdmc_init_newhier, 13},
-    {"_ggdmc_init_oldhier", (DL_FUNC) &_ggdmc_init_oldhier, 10},
     {"_ggdmc_rlba_norm", (DL_FUNC) &_ggdmc_rlba_norm, 8},
     {"_ggdmc_rprior_mat", (DL_FUNC) &_ggdmc_rprior_mat, 2},
-    {"_ggdmc_test_sumlogprior", (DL_FUNC) &_ggdmc_test_sumlogprior, 2},
-    {"_ggdmc_test_dprior", (DL_FUNC) &_ggdmc_test_dprior, 2},
+    {"_ggdmc_init_mcmc", (DL_FUNC) &_ggdmc_init_mcmc, 13},
+    {"_ggdmc_init_hier", (DL_FUNC) &_ggdmc_init_hier, 15},
     {"_ggdmc_dtnorm", (DL_FUNC) &_ggdmc_dtnorm, 6},
     {"_ggdmc_rtnorm", (DL_FUNC) &_ggdmc_rtnorm, 5},
     {"_ggdmc_ptnorm", (DL_FUNC) &_ggdmc_ptnorm, 7},

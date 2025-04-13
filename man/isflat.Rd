@@ -4,8 +4,14 @@
 \alias{isflat}
 \title{Model checking functions}
 \usage{
-isflat(x, p1 = 1/3, p2 = 1/3, cut_location = 0.25, cut_scale = Inf,
-  verbose = FALSE)
+isflat(
+  x,
+  p1 = 1/3,
+  p2 = 1/3,
+  cut_location = 0.25,
+  cut_scale = Inf,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{posterior samples}

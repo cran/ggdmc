@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{likelihood}
 \alias{likelihood}
-\title{Calculate log likelihoods}
+\title{Calculate likelihoods}
 \usage{
-likelihood(pvector, data, min_lik = 1e-10)
+likelihood(p_vector_r, data, min_lik = 1e-10)
 }
 \arguments{
-\item{pvector}{a parameter vector}
+\item{p_vector_r}{a parameter vector}
 
 \item{data}{data model instance}
 
@@ -17,7 +17,7 @@ likelihood(pvector, data, min_lik = 1e-10)
 a vector
 }
 \description{
-These function calculate log likelihoods. \code{likelihood_rd} implements
+These function calculate likelihoods. \code{likelihood_rd} implements
 the equations in Voss, Rothermund, and Voss (2004). These equations
 calculate diffusion decision model (Ratcliff & Mckoon, 2008). Specifically,
 this function implements Voss, Rothermund, and Voss's (2004) equations A1
@@ -33,7 +33,8 @@ constants = c(st0 = 0, sd_v = 1),
 responses = c("r1", "r2"),
 type      = "norm")
 
-p.vector <- c(A = .25, B = .35,  t0 = .2, mean_v.true = 1, mean_v.false = .25)
+p.vector <- c(A = .25, B = .35,  t0 = .2, mean_v.true = 1,
+          mean_v.false = .25)
 dat <- simulate(model, 1e3,  ps = p.vector)
 dmi <- BuildDMI(dat, model)
 den <- likelihood(p.vector, dmi)

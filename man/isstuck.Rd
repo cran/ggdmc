@@ -5,8 +5,7 @@
 \alias{CheckConverged}
 \title{Model checking functions}
 \usage{
-isstuck(x, hyper = FALSE, cut = 10, start = 1, end = NA,
-  verbose = FALSE)
+isstuck(x, hyper = FALSE, cut = 10, start = 1, end = NA, verbose = FALSE)
 
 CheckConverged(x)
 }

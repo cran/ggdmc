@@ -1,9 +1,9 @@
 ### Sampling -------------------------------------------------------------------
 run_one <- function (data, prior, nchain, nmc, thin, report, rp, gammamult,
-                     pm0, pm1, block)
+                     pm_Hu, pm_BT, block)
 {
-  out <- init_new(data, prior, nchain, nmc, thin, report, rp, gammamult, pm0,
-                  pm1, block)
+  out <- init_mcmc(data, prior, nchain, nmc, thin, report, rp, gammamult, pm_Hu,
+                  pm_BT, block)
   pnames <- GetPNames(attr(out$data, "model"))
   dimnames(out$theta) <- list(pnames, NULL, NULL)
   return(out)
@@ -11,10 +11,10 @@ run_one <- function (data, prior, nchain, nmc, thin, report, rp, gammamult,
 
 
 run_hier <- function (prior, lprior, sprior, data, nchain, nmc, thin, report,
-                      rp, gammamult, pm0, pm1, block)
+                      rp, gammamult, pm_Hu, pm_BT, block, add, is_old)
 {
-  out <- init_newhier(prior, lprior, sprior, data, nchain, nmc, thin, report,
-                       rp, gammamult, pm0, pm1, block)
+  out <- init_hier(data, prior, lprior, sprior, nchain, nmc, thin, report,
+                   rp, gammamult, pm_Hu, pm_BT, block, add, is_old)
 
   pnames <- GetPNames(attr(out[[1]]$data, "model"))
   phi1_tmp <- attr(out, "hyper")$phi[[1]]
@@ -41,7 +41,7 @@ run_hier <- function (prior, lprior, sprior, data, nchain, nmc, thin, report,
 ##' @importFrom parallel mclapply
 ##' @importFrom parallel stopCluster
 run_many <- function(data, prior, nchain, nmc, thin, report, rp, gammamult,
-                     pm0, pm1, block, ncore)
+                     pm0, pm_BT, block, ncore)
 {
 
   if (get_os() == "windows" & ncore > 1)
@@ -49,21 +49,21 @@ run_many <- function(data, prior, nchain, nmc, thin, report, rp, gammamult,
     cl  <- parallel::makeCluster(ncore)
     message("Run subjects in parallel")
     out <- parallel::parLapply(cl = cl, X = data,
-                               init_new, prior, nchain, nmc, thin, report,
-                               rp, gammamult, pm0, pm1, block)
+                               init_mcmc, prior, nchain, nmc, thin, report,
+                               rp, gammamult, pm0, pm_BT, block)
     parallel::stopCluster(cl)
   }
   else if (ncore > 1)
   {
     message("Run subjects in parallel")
-    out <- parallel::mclapply(data, init_new, prior, nchain, nmc, thin, report,
-                              rp, gammamult, pm0, pm1, block)
+    out <- parallel::mclapply(data, init_mcmc, prior, nchain, nmc, thin, report,
+                              rp, gammamult, pm0, pm_BT, block, mc.cores = ncore)
   }
   else
   {
     message("Run subjects with lapply")
-    out <- lapply(data, init_new, prior, nchain, nmc, thin, report, rp,
-                  gammamult, pm0, pm1, block)
+    out <- lapply(data, init_mcmc, prior, nchain, nmc, thin, report, rp,
+                  gammamult, pm0, pm_BT, block)
   }
 
   for(i in 1:length(out))
@@ -76,30 +76,50 @@ run_many <- function(data, prior, nchain, nmc, thin, report, rp, gammamult,
 ##' @importFrom parallel makeCluster
 ##' @importFrom parallel mclapply
 ##' @importFrom parallel stopCluster
-rerun_many <- function(samples, nmc, thin, report, rp, gammamult, pm0, pm1,
-                       block, add, ncore)
+rerun_many <- function(samples, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT,
+                       block, add, ncore, is_old)
 {
 
   if (get_os() == "windows" & ncore > 1)
   {
     cl  <- parallel::makeCluster(ncore)
-    message("Run subjects in parallel")
-    out <- parallel::parLapply(cl = cl, X = samples,
-                               init_old, nmc, thin, report, rp,
-                               gammamult, pm0, pm1, block, add)
+    message("Run subjects in parallel (parLapply)")
+    n_subject <- length(samples)
+    out <- parallel::parLapply(cl = cl, X = seq_len(n_subject), function(i) {
+      samples_in <- samples[[i]]
+      p_prior <- samples[[i]]$p.prior
+      n_chain <- samples[[i]]$n.chains
+      init_mcmc(samples[[i]], p_prior, n_chain, nmc, thin, report, rp,
+                gammamult, pm_Hu, pm_BT, block, add, is_old)
+    })
+
+    
     parallel::stopCluster(cl)
   }
   else if (ncore > 1)
   {
-    message("Run subjects in parallel")
-    out <- parallel::mclapply(samples, init_old, nmc, thin, report, rp,
-                              gammamult, pm0, pm1, block, add)
+    message("Run subjects in parallel (mclapply)")
+    n_subject <- length(samples)
+    out <- parallel::mclapply(seq_len(n_subject), function(i) {
+      samples_in <- samples[[i]]
+      p_prior <- samples[[i]]$p.prior
+      n_chain <- samples[[i]]$n.chains
+      init_mcmc(samples[[i]], p_prior, n_chain, nmc, thin, report, rp,
+                gammamult, pm_Hu, pm_BT, block, add, is_old)
+    }, mc.cores = ncore)
+
   }
   else
   {
     message("Run subjects with lapply")
-    out <- lapply(samples, init_old, nmc, thin, report, rp,
-                  gammamult, pm0, pm1, block, add)
+    n_subject <- length(samples)
+    out <- lapply(seq_len(n_subject), function(i) {
+      samples_in <- samples[[i]]
+      p_prior <- samples[[i]]$p.prior
+      n_chain <- samples[[i]]$n.chains
+      init_mcmc(samples[[i]], p_prior, n_chain, nmc, thin, report, rp,
+                gammamult, pm_Hu, pm_BT, block, add, is_old)
+      })
   }
 
   for(i in 1:length(out))
@@ -128,18 +148,19 @@ rerun_many <- function(samples, nmc, thin, report, rp, gammamult, pm0, pm1,
 ##' @param report progress report interval
 ##' @param rp tuning parameter 1
 ##' @param gammamult tuning parameter 2. This is the step size.
-##' @param pm0 probability of migration type 0 (Hu & Tsui, 2010)
-##' @param pm1 probability of migration type 1 (Turner et al., 2013)
+##' @param pm_Hu probability of migration type 0 (Hu & Tsui, 2010)
+##' @param pm_BT probability of migration type 1 (Turner et al., 2013)
 ##' @param block Only for hierarchical modeling. A Boolean switch for update one
 ##' parameter at a time
 ##' @param ncore Only for non-hierarchical, fixed-effect models with many
 ##' subjects.
 ##' @param add Boolean whether to add new samples
+##' @param is_old start sampling from a DMI or fit samples
 ##'
 ##' @export
 StartNewsamples <- function(data, prior=NULL, nmc=2e2, thin=1, nchain=NULL,
-                            report=1e2, rp=.001, gammamult=2.38, pm0=.05,
-                            pm1=.05, block=TRUE, ncore=1)
+                            report=1e2, rp=.001, gammamult=2.38, pm_Hu=.05,
+                            pm_BT=.05, block=TRUE, ncore=1, add = FALSE, is_old = FALSE)
 {
   if ( !is.null(prior) &&
        all(c("pprior", "location", "scale") %in% names(prior)) &&
@@ -151,7 +172,7 @@ StartNewsamples <- function(data, prior=NULL, nmc=2e2, thin=1, nchain=NULL,
 
     message("Hierarchical model")
     out <- run_hier(prior[[1]], prior[[2]], prior[[3]], data, nchain, nmc, thin,
-                    report, rp, gammamult, pm0, pm1, block)
+                    report, rp, gammamult, pm_Hu, pm_BT, block, add, is_old)
   }
   else if ( is.data.frame(data) )
   {
@@ -159,17 +180,17 @@ StartNewsamples <- function(data, prior=NULL, nmc=2e2, thin=1, nchain=NULL,
     checklba(data)
 
     message("Non-hierarchical model")
-    out <- run_one(data, prior, nchain, nmc, thin, report, rp, gammamult, pm0,
-                   pm1, block)
+    out <- run_one(data, prior, nchain, nmc, thin, report, rp, gammamult, pm_Hu,
+                   pm_BT, block)
   }
   else
   {
     for (i in 1:length(data)) nchain <- CheckDMI(data[[i]], prior, nchain)
     checklba(data[[1]])
 
-    message("Non-hierarchical model with many subjects")
-    out <- run_many(data, prior, nchain, nmc, thin, report, rp, gammamult, pm0,
-                    pm1, block, ncore)
+    message("Non-hierarchical model fitting many subjects")
+    out <- run_many(data, prior, nchain, nmc, thin, report, rp, gammamult, pm_Hu,
+                    pm_BT, block, ncore)
   }
 
   class(out) <- c("model", "list")
@@ -180,15 +201,21 @@ StartNewsamples <- function(data, prior=NULL, nmc=2e2, thin=1, nchain=NULL,
 ##' @rdname StartNewsamples
 ##' @export
 run <-  function(samples, nmc=5e2, thin=1, report=1e2, rp=.001,
-                 gammamult=2.38, pm0=0, pm1=0, block=TRUE, ncore=1,
-                 add=FALSE)
+                 gammamult=2.38, pm_Hu=0, pm_BT=0, block=TRUE, ncore=1,
+                 add=FALSE, is_old = TRUE)
 {
   hyper <- attr(samples, "hyper")
 
   if ( !is.null(hyper) )
   {
-    out <- init_oldhier(samples, nmc, thin, report, rp, gammamult, pm0, pm1,
-                        block, add)
+    subject1 <- samples[[1]]
+    pprior <- subject1$p.prior
+    lprior <- hyper$pp.prior$location
+    sprior <- hyper$pp.prior$scale
+    nchain <- subject1$n.chains
+    
+    out <- init_hier(samples, pprior, lprior, sprior, nchain, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT,
+                        block, add, is_old)
 
     pnames   <- GetPNames(attr(out[[1]]$data, "model"))
     phi1_tmp <- attr(out, "hyper")$phi[[1]]
@@ -208,15 +235,15 @@ run <-  function(samples, nmc=5e2, thin=1, report=1e2, rp=.001,
   }
   else if (any(names(samples) == "theta"))
   {
-    out <- init_old(samples, nmc, thin, report, rp, gammamult, pm0, pm1,
-                    block, add)
+    out <- init_mcmc(samples, samples$p.prior, samples$n.chains, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT,
+                    block, add, is_old)
     pnames <- GetPNames(attr(out$data, "model"))
     dimnames(out$theta) <- list(pnames, NULL, NULL)
   }
   else
   {
-    out <- rerun_many(samples, nmc, thin, report, rp, gammamult, pm0, pm1,
-                      block, add, ncore)
+    out <- rerun_many(samples, nmc, thin, report, rp, gammamult, pm_Hu, pm_BT,
+                      block, add, ncore, is_old)
   }
 
   class(out) <- c("model", "list")

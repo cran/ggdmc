@@ -5,8 +5,16 @@
 \alias{plot.prior}
 \title{Plot prior distributions}
 \usage{
-plot_prior(i, prior, xlim = NA, natural = TRUE, npoint = 100,
-  trans = NA, save = FALSE, ...)
+plot_prior(
+  i,
+  prior,
+  xlim = NA,
+  natural = TRUE,
+  npoint = 100,
+  trans = NA,
+  save = FALSE,
+  ...
+)
 
 \method{plot}{prior}(x, save = FALSE, ps = NULL, ...)
 }

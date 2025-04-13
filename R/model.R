@@ -6,7 +6,6 @@
 ##'
 ##' @keywords package
 ##' @name ggdmc
-##' @docType package
 ##' @author  Yi-Shin Lin <yishinlin001@gmail.com> \cr
 ##' Andrew Heathcote <andrew.heathcote@utas.edu.au>
 ##' @references
@@ -508,7 +507,8 @@ check_BuildModel <- function(p_map, responses, factors, match_map, constants,
   ## Check match.map (if supplied)
   if (!is.null(match_map)) {
     # Check structure
-    if ( length(match_map) < 1 || class(match_map[[1]]) != "list" )
+    
+    if ( length(match_map) < 1 || !is.list(match_map[[1]]) )
       stop("match.map must be a list of lists")
     # Check match.map contains at least name M
     if ( !any(names(match_map) %in% "M") )
@@ -936,7 +936,7 @@ AssignMap <- function(map, value = "", eq.list = list(), funs = NULL,
     })
     if (length(funs)!=length(eq.list))
       stop("Must specify one function pair in funs for each entry in eq.list")
-    if ( class(funs)!="list" || !all(unlist(lapply(funs,class))=="list") )
+    if ( !is.list(funs) || !all(unlist(lapply(funs, class))=="list") )
       stop("funs must be  list of lists")
     if ( !all(unlist(lapply(funs,length))==2) )
       stop("Each entry in funs must be length 2")

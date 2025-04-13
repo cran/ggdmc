@@ -26,7 +26,9 @@ p.prior <- BuildPrior(
 
 ## Sampling and check model ----
 cat("Starting a new model fit: \n")
-fit <- run(StartNewsamples(dmi, p.prior, block = FALSE), block = FALSE)
+fit <- StartNewsamples(dmi, p.prior, block = FALSE)
+fit <- run(fit, block = FALSE)
+
 res <- gelman(fit, verbose=TRUE)
 
 pdf(file = "analysis_one.pdf")

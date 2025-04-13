@@ -4,10 +4,21 @@
 \alias{summary.model}
 \title{Summarise posterior samples}
 \usage{
-\method{summary}{model}(object, hyper = FALSE, start = 1, end = NA,
-  hmeans = FALSE, hci = FALSE, prob = c(0.025, 0.25, 0.5, 0.75,
-  0.975), recovery = FALSE, ps = NA, type = 1, verbose = FALSE,
-  digits = 2, ...)
+\method{summary}{model}(
+  object,
+  hyper = FALSE,
+  start = 1,
+  end = NA,
+  hmeans = FALSE,
+  hci = FALSE,
+  prob = c(0.025, 0.25, 0.5, 0.75, 0.975),
+  recovery = FALSE,
+  ps = NA,
+  type = 1,
+  verbose = FALSE,
+  digits = 2,
+  ...
+)
 }
 \arguments{
 \item{object}{posterior samples}

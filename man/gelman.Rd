@@ -5,15 +5,37 @@
 \alias{hgelman}
 \title{Potential scale reduction factor}
 \usage{
-gelman(x, hyper = FALSE, start = 1, end = NA, confidence = 0.95,
-  transform = TRUE, autoburnin = FALSE, multivariate = TRUE,
-  split = TRUE, subchain = FALSE, nsubchain = 3, digits = 2,
-  verbose = FALSE, ...)
+gelman(
+  x,
+  hyper = FALSE,
+  start = 1,
+  end = NA,
+  confidence = 0.95,
+  transform = TRUE,
+  autoburnin = FALSE,
+  multivariate = TRUE,
+  split = TRUE,
+  subchain = FALSE,
+  nsubchain = 3,
+  digits = 2,
+  verbose = FALSE,
+  ...
+)
 
-hgelman(x, start = 1, end = NA, confidence = 0.95,
-  transform = TRUE, autoburnin = FALSE, split = TRUE,
-  subchain = FALSE, nsubchain = 3, digits = 2, verbose = FALSE,
-  ...)
+hgelman(
+  x,
+  start = 1,
+  end = NA,
+  confidence = 0.95,
+  transform = TRUE,
+  autoburnin = FALSE,
+  split = TRUE,
+  subchain = FALSE,
+  nsubchain = 3,
+  digits = 2,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{posterior samples}

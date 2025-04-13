@@ -4,13 +4,11 @@ using namespace Rcpp;
 
 Prior::Prior (List & pprior)
 {
-  using namespace arma;
-
   std::vector<std::string> pnames = pprior.attr("names");
   m_npar = pnames.size();
 
-  vec p0(m_npar), p1(m_npar), l(m_npar), u(m_npar);
-  uvec d(m_npar), lg(m_npar);
+  arma::vec p0(m_npar), p1(m_npar), l(m_npar), u(m_npar);
+  arma::uvec d(m_npar), lg(m_npar);
 
   for (size_t i = 0; i < m_npar; i++) {
     List a_list = pprior[pnames[i]];
@@ -31,10 +29,7 @@ Prior::Prior (List & pprior)
   m_lg = lg;
 }
 
-Prior::~Prior()
-{
-  // Rcout << "Prior destructor\n";
-}
+Prior::~Prior() {}
 
 void Prior::dprior(double * pvector, double * out)
 {
@@ -113,8 +108,6 @@ arma::vec Prior::dprior(arma::vec pvector)
   arma::vec out(m_npar);
   for (size_t i = 0; i < m_npar; i++)
   {
-    // Rcout << "tmp[i] " << tmp[i] << " - " << R_FINITE(tmp[i]) << "\n";
-
     if ( !R_FINITE(tmp[i]) )
     {
       out[i] = m_lg[i] ? -23.02585 : 1e-10; // critical to hierarchical
@@ -175,10 +168,6 @@ arma::vec Prior::rprior()
 
       Rcout << "Distribution type not supported\n";
 
-      // l = ISNAN(lower[i]) ? R_NegInf : lower[i];
-      // u = ISNAN(upper[i]) ? R_PosInf : upper[i];
-      // out[i] = rtn_scalar2(p1[i], p2[i], l, u);
-
     } else {
       Rcout << "Distribution type not supported\n";
       out[i] = NA_REAL;
@@ -191,63 +180,5 @@ arma::vec Prior::rprior()
 double Prior::sumlogprior(arma::vec pvector)
 {
   arma::vec out = dprior(pvector);
-  // den.replace(arma::datum::inf, 1e-10);
-  // out.replace(R_PosInf, 1e-10);
-
   return arma::accu(out);
-}
-
-void Prior::print(std::string str) const
-{
-  Rcpp::Rcout << str << ":\n";
-  Rcpp::Rcout << "[Location, scale, lower, upper]:\n";
-
-  for (size_t i=0; i<m_npar; i++)
-  {
-    Rcpp::Rcout << "[" << m_p0[i] << ", " <<
-      m_p1[i] << ", " << m_l[i] << ", " << m_u[i] << "]" << std::endl;
-  }
-}
-
-// [[Rcpp::export]]
-NumericMatrix rprior_mat(List prior, unsigned int n) {
-
-  if (n < 1) stop("n must be greater or equal to 1");
-
-  Prior * obj = new Prior(prior);
-  CharacterVector pnames = prior.attr("names");
-  unsigned int npar = pnames.size();
-
-  NumericMatrix out(n, npar);
-  for (size_t i=0; i<n; i++)
-  {
-    arma::vec tmp = obj->rprior();
-
-    for (size_t j=0; j<npar; j++)
-    {
-      out(i,j) = tmp[j];
-    }
-  }
-
-  Rcpp::colnames(out) = pnames;
-  return out;
-}
-
-
-// [[Rcpp::export]]
-double test_sumlogprior(arma::vec pvec, List prior)
-{
-  Prior      * p0 = new Prior (prior);
-  double out = p0->sumlogprior(pvec);;
-  delete p0;
-  return out;
-}
-
-// [[Rcpp::export]]
-arma::vec test_dprior(arma::vec pvec, List prior)
-{
-  Prior      * p0 = new Prior (prior);
-  arma::vec out = p0->dprior(pvec);
-  delete p0;
-  return out;
 }

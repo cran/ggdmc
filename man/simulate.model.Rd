@@ -4,8 +4,7 @@
 \alias{simulate.model}
 \title{Simulate response time data}
 \usage{
-\method{simulate}{model}(object, nsim = NA, seed = NULL, nsub = NA,
-  prior = NA, ps = NA, ...)
+\method{simulate}{model}(object, nsim = NA, seed = NULL, nsub = NA, prior = NA, ps = NA, ...)
 }
 \arguments{
 \item{object}{a model object.}

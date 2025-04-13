@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rlba_norm}
 \alias{rlba_norm}
-\title{Generate Random Deviates of the LBA Distribution}
+\title{Generate Random Responses of the LBA Distribution}
 \usage{
 rlba_norm(n, A, b, mean_v, sd_v, t0, st0, posdrift)
 }
@@ -17,16 +17,17 @@ rlba_norm(n, A, b, mean_v, sd_v, t0, st0, posdrift)
 
 \item{sd_v}{standard deviation of drift rate vector}
 
-\item{t0}{nondecision time, a vector.}
+\item{t0}{non-decision time, a vector.}
 
-\item{st0}{nondecision time variation, a vector.}
+\item{st0}{non-decision time variation, a vector.}
 
 \item{posdrift}{if exclude negative drift rates}
 }
 \value{
-a n x 2 matrix of RTs (first column) and responses (second column).
+a n x 2 matrix of response time (first column) and responses (second
+column).
 }
 \description{
-\code{rlba_norm}, only slightly faster than \code{maker}, calls C++
-function directly.
+\code{rlba_norm} used the LBA process to generate response times and
+responses.
 }

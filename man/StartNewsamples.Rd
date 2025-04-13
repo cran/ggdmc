@@ -5,13 +5,37 @@
 \alias{run}
 \title{Start new model fits}
 \usage{
-StartNewsamples(data, prior = NULL, nmc = 200, thin = 1,
-  nchain = NULL, report = 100, rp = 0.001, gammamult = 2.38,
-  pm0 = 0.05, pm1 = 0.05, block = TRUE, ncore = 1)
+StartNewsamples(
+  data,
+  prior = NULL,
+  nmc = 200,
+  thin = 1,
+  nchain = NULL,
+  report = 100,
+  rp = 0.001,
+  gammamult = 2.38,
+  pm_Hu = 0.05,
+  pm_BT = 0.05,
+  block = TRUE,
+  ncore = 1,
+  add = FALSE,
+  is_old = FALSE
+)
 
-run(samples, nmc = 500, thin = 1, report = 100, rp = 0.001,
-  gammamult = 2.38, pm0 = 0, pm1 = 0, block = TRUE, ncore = 1,
-  add = FALSE)
+run(
+  samples,
+  nmc = 500,
+  thin = 1,
+  report = 100,
+  rp = 0.001,
+  gammamult = 2.38,
+  pm_Hu = 0,
+  pm_BT = 0,
+  block = TRUE,
+  ncore = 1,
+  add = FALSE,
+  is_old = TRUE
+)
 }
 \arguments{
 \item{data}{data model instance(s)}
@@ -32,9 +56,9 @@ list with three sets of prior distributions. Each is respectively named,
 
 \item{gammamult}{tuning parameter 2. This is the step size.}
 
-\item{pm0}{probability of migration type 0 (Hu & Tsui, 2010)}
+\item{pm_Hu}{probability of migration type 0 (Hu & Tsui, 2010)}
 
-\item{pm1}{probability of migration type 1 (Turner et al., 2013)}
+\item{pm_BT}{probability of migration type 1 (Turner et al., 2013)}
 
 \item{block}{Only for hierarchical modeling. A Boolean switch for update one
 parameter at a time}
@@ -42,9 +66,11 @@ parameter at a time}
 \item{ncore}{Only for non-hierarchical, fixed-effect models with many
 subjects.}
 
-\item{samples}{posterior samples.}
-
 \item{add}{Boolean whether to add new samples}
+
+\item{is_old}{start sampling from a DMI or fit samples}
+
+\item{samples}{posterior samples.}
 }
 \description{
 Fit a hierarchical or a fixed-effect model, using Bayeisan

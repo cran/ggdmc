@@ -5,11 +5,24 @@
 \alias{phi2mcmclist}
 \title{Convert theta to a mcmc List}
 \usage{
-theta2mcmclist(x, start = 1, end = NA, split = FALSE,
-  subchain = FALSE, nsubchain = 3, thin = NA)
+theta2mcmclist(
+  x,
+  start = 1,
+  end = NA,
+  split = FALSE,
+  subchain = FALSE,
+  nsubchain = 3,
+  thin = NA
+)
 
-phi2mcmclist(x, start = 1, end = NA, split = FALSE,
-  subchain = FALSE, nsubchain = 3)
+phi2mcmclist(
+  x,
+  start = 1,
+  end = NA,
+  split = FALSE,
+  subchain = FALSE,
+  nsubchain = 3
+)
 }
 \arguments{
 \item{x}{posterior samples}

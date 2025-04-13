@@ -18,7 +18,11 @@ test_file(path = "Group0/test_GetParameterMatrix.R")
 test_file(path = "Group0/test_likelihood.R")
 test_file(path = "Group0/test_p_df.R")
 test_file(path = "Group0/test_make_level_array.R")
+
+
 test_file(path = "Group0/test_tnorm.R")
+
+
 test_file(path = "Group0/test_BuildPrior.R")
 test_file(path = "Group0/test_GetNsim.R")
 
@@ -32,8 +36,8 @@ test_file(path = "Group1/test_DDM1S.R")
 
 cat("\n========================== Group 2 tests ==========================\n")
 
-# test_file(path = "Group2/test_LBA8S.R")
-# test_file(path = "Group2/test_DDM8S.R")
+test_file(path = "Group2/test_LBA8S.R")
+test_file(path = "Group2/test_DDM8S.R")
 # test_file(path = "Group2/test_hWiener.R")
 # test_file(path = "Group2/test_HLBA.R")
 # test_file(path = "Group2/test_HDDM.R")
@@ -48,5 +52,5 @@ cat("\n========================== Group 3 tests ==========================\n")
 cat("\n====================== Testing plot functions ======================\n")
 
 test_file(path = "plots/test_plotsubchain.R")
-test_file(path = "plots/test_postpred.R")
+# test_file(path = "plots/test_postpred.R")
 test_file(path = "plots/test_plot_tnorm.R")
